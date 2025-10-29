@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ESP32 Motion Detection - Telegram Configuration Tester</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .substep {
+            background: #ffffff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            border: 1px solid #e1e5e9;
+            border-left: 3px solid #28a745;
+        }
+        
+        .substep h4 {
+            color: #28a745;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .chat-type-selector {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+            flex-wrap: wrap;
+        }
+        
+        .chat-type-option {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+        }
+        
+        .chat-type-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+        
+        input[type="radio"]:checked + .chat-type-option {
+            border-color: #28a745;
+            background: #f8fff8;
+        }
+        
+        input[type="radio"] {
+            display: none;
+        }
+        
+        .group-setup-steps {
+            margin: 15px 0;
+        }
+        
+        .group-step {
+            background: #f1f8ff;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 10px 0;
+            border-left: 3px solid #007bff;
+        }
+        
+        .group-step h5 {
+            color: #007bff;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .mini-step {
+            background: #007bff;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            margin-right: 8px;
+        }
+        
+        .step h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+        
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .code-mapping {
+            background: #f1f3f4;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .code-mapping strong {
+            color: #667eea;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+            border-radius: 6px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .project-link {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .project-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .project-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .validation-item {
+            display: flex;
+            align-items: center;
+            margin: 10px 0;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .validation-item .icon {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+        
+        .validation-item.valid .icon {
+            color: #28a745;
+        }
+        
+        .validation-item.invalid .icon {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 ESP32 Motion Detection - Telegram Tester</h1>
+            <p>Test your Telegram bot configuration before uploading to ESP32</p>
+        </div>
+        
+        <div class="content">
+            <div class="info">
+                <strong>🎯 Purpose:</strong> This tool helps you verify that your Telegram bot is configured correctly before uploading code to your ESP32. 
+                It tests the exact same values you'll use in your <code>secrets.h</code> file.
+            </div>
+            
+            <div class="step">
+                <h3><span class="step-number">1</span>Create Telegram Bot (if not done)</h3>
+                <p>If you haven't created a bot yet:</p>
+                <ol style="margin: 10px 0 10px 20px;">
+                    <li>Message <strong>@BotFather</strong> on Telegram</li>
+                    <li>Send <code>/newbot</code></li>
+                    <li>Choose a name: <strong>"Motion Alert Bot"</strong></li>
+                    <li>Choose username: <strong>"your_motion_alert_bot"</strong></li>
+                    <li>Copy the token (looks like: <code>1234567890:ABCdefGHIjklMNOpqrSTUvwxYZ123456789</code>)</li>
+                </ol>
+            </div>
+            
+            <div class="step">
+                <h3><span class="step-number">2</span>Get Your Chat ID</h3>
+                <p><strong>This is the most important step!</strong> Your Chat ID tells the bot where to send messages.</p>
+                
+                <div class="substep">
+                    <h4>🎯 Step 2.1: Choose Your Notification Type</h4>
+                    <p>Select how you want to receive motion alerts:</p>
+                    
+                    <div class="chat-type-selector">
+                        <input type="radio" id="personalChat" name="chatType" value="personal" checked>
+                        <label for="personalChat" class="chat-type-option">
+                            <strong>👤 Personal Chat</strong><br>
+                            <small>Direct messages to you only</small>
+                        </label>
+                        
+                        <input type="radio" id="groupChat" name="chatType" value="group">
+                        <label for="groupChat" class="chat-type-option">
+                            <strong>👥 Group Chat</strong><br>
+                            <small>Notify family/team members</small>
+                        </label>
+                        
+                        <input type="radio" id="channelChat" name="chatType" value="channel">
+                        <label for="channelChat" class="chat-type-option">
+                            <strong>📢 Channel</strong><br>
+                            <small>Broadcast to subscribers</small>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="substep" id="personalChatInstructions">
+                    <h4>📱 Step 2.2a: Personal Chat Setup</h4>
+                    <ol style="margin: 10px 0 10px 20px;">
+                        <li>Find your bot in Telegram (search for the username you created)</li>
+                        <li>Send <strong>any message</strong> to your bot (like "hello" or "test")</li>
+                        <li>The bot won't reply yet - that's normal!</li>
+                    </ol>
+                </div>
+
+                <div class="substep" id="groupChatInstructions" style="display: none;">
+                    <h4>👥 Step 2.2b: Group Chat Setup</h4>
+                    <div class="group-setup-steps">
+                        <div class="group-step">
+                            <h5><span class="mini-step">2.2b.1</span> Create or Use Existing Group</h5>
+                            <ul>
+                                <li><strong>New Group:</strong> Tap "New Group" → Add family/team members → Name it (e.g., "Home Security Alerts")</li>
+                                <li><strong>Existing Group:</strong> Open your existing group where you want motion alerts</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="group-step">
+                            <h5><span class="mini-step">2.2b.2</span> Add Your Bot to the Group</h5>
+                            <ol>
+                                <li>In your group, tap the <strong>Group Name</strong> at the top</li>
+                                <li>Tap <strong>"Add Members"</strong> or <strong>"+"</strong> icon</li>
+                                <li>Search for your bot username (e.g., <code>@your_motion_alert_bot</code>)</li>
+                                <li>Select your bot and tap <strong>"Add"</strong></li>
+                                <li><strong>✅ Confirm:</strong> You should see "Bot was added to the group" message</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="group-step">
+                            <h5><span class="mini-step">2.2b.3</span> Make Bot an Admin (Recommended)</h5>
+                            <ol>
+                                <li>In group settings, tap <strong>"Administrators"</strong></li>
+                                <li>Tap <strong>"Add Administrator"</strong></li>
+                                <li>Select your bot</li>
+                                <li>Enable <strong>"Post Messages"</strong> permission</li>
+                                <li>Tap <strong>"Done"</strong></li>
+                            </ol>
+                            <div class="info">
+                                <strong>💡 Why Admin?</strong> Admin permissions ensure reliable message delivery and allow the bot to send messages even if group settings restrict non-admins.
+                            </div>
+                        </div>
+                        
+                        <div class="group-step">
+                            <h5><span class="mini-step">2.2b.4</span> Test Bot in Group</h5>
+                            <ol>
+                                <li>Send any message in the group (e.g., "Testing bot setup")</li>
+                                <li>Make sure the bot appears in the member list</li>
+                                <li>Ready to get Chat ID!</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="substep" id="channelChatInstructions" style="display: none;">
+                    <h4>📢 Step 2.2c: Channel Setup</h4>
+                    <div class="group-setup-steps">
+                        <div class="group-step">
+                            <h5><span class="mini-step">2.2c.1</span> Create or Use Existing Channel</h5>
+                            <ul>
+                                <li><strong>New Channel:</strong> Tap "New Channel" → Name it (e.g., "Home Security Alerts") → Choose Public/Private</li>
+                                <li><strong>Existing Channel:</strong> Open your existing channel for security alerts</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="group-step">
+                            <h5><span class="mini-step">2.2c.2</span> Add Bot as Administrator</h5>
+                            <ol>
+                                <li>In your channel, tap the <strong>Channel Name</strong> at the top</li>
+                                <li>Tap <strong>"Administrators"</strong></li>
+                                <li>Tap <strong>"Add Administrator"</strong></li>
+                                <li>Search for your bot username (e.g., <code>@your_motion_alert_bot</code>)</li>
+                                <li>Select your bot and enable <strong>"Post Messages"</strong> permission</li>
+                                <li>Tap <strong>"Done"</strong></li>
+                            </ol>
+                        </div>
+                        
+                        <div class="group-step">
+                            <h5><span class="mini-step">2.2c.3</span> Post Test Message</h5>
+                            <ol>
+                                <li>Post any message in your channel (e.g., "Setting up motion alerts")</li>
+                                <li>Verify the bot appears as an administrator</li>
+                                <li>Ready to get Chat ID!</li>
+                            </ol>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="substep">
+                    <h4>🔍 Step 2.3: Find Your Chat ID</h4>
+                    
+                    <div class="form-group">
+                        <label for="tokenForChatId">Enter your Bot Token to get Chat ID:</label>
+                        <input type="text" id="tokenForChatId" placeholder="8413096457:AAFEHxhPtB0G9_eAt_hEacCvmBUOCvp-Gqs">
+                        <button class="btn" onclick="getChatId()" id="getChatIdBtn" style="margin-top: 10px;">
+                            🔍 Get My Chat ID
+                        </button>
+                    </div>
+
+                    <div id="chatIdResult" style="margin-top: 15px;"></div>
+
+                    <div class="warning">
+                        <strong>📖 Manual Method:</strong> You can also visit this URL in your browser:<br>
+                        <code>https://api.telegram.org/bot&lt;YOUR_TOKEN&gt;/getUpdates</code><br>
+                        Look for <code>"chat":{"id":123456789}</code> - the number after "id" is your Chat ID.
+                    </div>
+                </div>
+
+                <div class="substep">
+                    <h4>📋 Chat ID Examples</h4>
+                    <ul style="margin: 10px 0 10px 20px;">
+                        <li><strong>Personal Chat:</strong> <code>123456789</code> (positive number)</li>
+                        <li><strong>Group Chat:</strong> <code>-123456789</code> (negative number)</li>
+                        <li><strong>Channel:</strong> <code>-1001234567890</code> (starts with -100)</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="step">
+                <h3><span class="step-number">3</span>Test Your Configuration</h3>
+                
+                <div class="form-group">
+                    <label for="botToken">🤖 Bot Token</label>
+                    <input type="text" id="botToken" placeholder="1234567890:ABCdefGHIjklMNOpqrSTUvwxYZ123456789">
+                    <div class="code-mapping">
+                        <strong>ESP32 Code:</strong> This goes to <code>BOT_TOKEN</code> in your <code>secrets.h</code> file
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="chatId">💬 Chat ID</label>
+                    <input type="text" id="chatId" placeholder="123456789 or -1001234567890">
+                    <div class="code-mapping">
+                        <strong>ESP32 Code:</strong> This goes to <code>CHAT_ID</code> in your <code>secrets.h</code> file
+                    </div>
+                </div>
+                
+                <div id="validation" style="margin: 20px 0;"></div>
+                
+                <button class="btn" onclick="testBot()" id="testBtn">
+                    🧪 Test Bot Configuration
+                </button>
+                
+                <div id="result"></div>
+            </div>
+            
+            <div class="step">
+                <h3><span class="step-number">4</span>Update Your ESP32 Code</h3>
+                <p>Once the test passes, update your ESP32 project:</p>
+                <div class="code-mapping">
+                    <strong>File:</strong> <code>include/secrets.h</code><br><br>
+                    <strong>Line 10:</strong> <code>const char* WIFI_SSID = "Your_WiFi_Name";</code><br>
+                    <strong>Line 11:</strong> <code>const char* WIFI_PASSWORD = "Your_WiFi_Password";</code><br>
+                    <strong>Line 14:</strong> <code>const char* BOT_TOKEN = "YOUR_TESTED_TOKEN";</code><br>
+                    <strong>Line 15:</strong> <code>const char* CHAT_ID = "YOUR_TESTED_CHAT_ID";</code>
+                </div>
+                
+                <div class="info">
+                    <strong>✅ Next Steps After Testing:</strong>
+                    <ol style="margin: 10px 0 0 20px;">
+                        <li>Copy your tested values to <code>secrets.h</code></li>
+                        <li>Wire your PIR sensor to ESP32</li>
+                        <li>Upload: <code>pio run --target upload</code></li>
+                        <li>Monitor: <code>pio device monitor</code></li>
+                        <li>Test motion detection!</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="project-link">
+            <p>
+                🚀 <strong>ESP32 Motion Detection Project:</strong> 
+                <a href="https://github.com/rakshitbharat/ESP32-Motion-Detection-Telegram-Notifier" target="_blank">
+                    View on GitHub
+                </a> | 
+                <a href="https://github.com/rakshitbharat/ESP32-Motion-Detection-Telegram-Notifier/blob/main/QUICK_SETUP.md" target="_blank">
+                    Quick Setup Guide
+                </a>
+            </p>
+            <p style="margin-top: 10px; font-size: 14px; color: #666;">
+                This tester validates the same Telegram configuration used by your ESP32 device
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function validateInputs() {
+            const botToken = document.getElementById('botToken').value.trim();
+            const chatId = document.getElementById('chatId').value.trim();
+            const validationDiv = document.getElementById('validation');
+            
+            let validationHTML = '';
+            let isValid = true;
+            
+            // Validate Bot Token
+            if (botToken.length === 0) {
+                validationHTML += '<div class="validation-item invalid"><span class="icon">❌</span><span>Bot Token is required</span></div>';
+                isValid = false;
+            } else if (botToken.length < 20 || !botToken.includes(':')) {
+                validationHTML += '<div class="validation-item invalid"><span class="icon">❌</span><span>Bot Token format is invalid (should contain \":\" and be 20+ characters)</span></div>';
+                isValid = false;
+            } else {
+                validationHTML += '<div class="validation-item valid"><span class="icon">✅</span><span>Bot Token format looks correct</span></div>';
+            }
+            
+            // Validate Chat ID
+            if (chatId.length === 0) {
+                validationHTML += '<div class="validation-item invalid"><span class="icon">❌</span><span>Chat ID is required</span></div>';
+                isValid = false;
+            } else if (!/^-?\d+$/.test(chatId)) {
+                validationHTML += '<div class="validation-item invalid"><span class="icon">❌</span><span>Chat ID must be a number (positive for personal chats, negative for groups)</span></div>';
+                isValid = false;
+            } else {
+                const chatType = chatId.startsWith('-100') ? 'Group/Channel' : (chatId.startsWith('-') ? 'Group' : 'Personal Chat');
+                validationHTML += `<div class="validation-item valid"><span class="icon">✅</span><span>Chat ID format correct (${chatType})</span></div>`;
+            }
+            
+            validationDiv.innerHTML = validationHTML;
+            return isValid;
+        }
+        
+        // Add real-time validation
+        document.getElementById('botToken').addEventListener('input', validateInputs);
+        document.getElementById('chatId').addEventListener('input', validateInputs);
+        
+        async function testBot() {
+            const botToken = document.getElementById('botToken').value.trim();
+            const chatId = document.getElementById('chatId').value.trim();
+            const resultDiv = document.getElementById('result');
+            const testBtn = document.getElementById('testBtn');
+            
+            if (!validateInputs()) {
+                return;
+            }
+            
+            // Show loading state
+            testBtn.disabled = true;
+            testBtn.innerHTML = '<span class="loading"></span>Testing...';
+            resultDiv.innerHTML = '';
+            
+            try {
+                // Test 1: Get bot info
+                const getBotResponse = await fetch(`https://api.telegram.org/bot${botToken}/getMe`);
+                const botInfo = await getBotResponse.json();
+                
+                if (!botInfo.ok) {
+                    throw new Error(`Bot Token Error: ${botInfo.description}`);
+                }
+                
+                // Test 2: Send test message
+                const testMessage = `🧪 **ESP32 Motion Detection Test**
+                
+✅ Bot Token: Valid
+✅ Chat ID: Valid  
+✅ Connection: Successful
+🕐 Test Time: ${new Date().toLocaleString()}
+
+🚀 **Your Telegram configuration is working!**
+
+Copy these values to your ESP32 \`secrets.h\` file:
+• BOT_TOKEN = "${botToken}"
+• CHAT_ID = "${chatId}"
+
+Next: Wire your PIR sensor and upload the ESP32 code!`;
+                
+                const sendMessageResponse = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        chat_id: chatId,
+                        text: testMessage,
+                        parse_mode: 'Markdown'
+                    })
+                });
+                
+                const sendResult = await sendMessageResponse.json();
+                
+                if (!sendResult.ok) {
+                    throw new Error(`Send Message Error: ${sendResult.description}`);
+                }
+                
+                // Success!
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <h4>🎉 Success! Your Telegram configuration is working perfectly!</h4>
+                        <p><strong>Bot Name:</strong> ${botInfo.result.first_name} (@${botInfo.result.username})</p>
+                        <p><strong>Chat ID:</strong> ${chatId}</p>
+                        <p><strong>Test Message:</strong> Sent successfully at ${new Date().toLocaleString()}</p>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px solid #c3e6cb;">
+                        <p><strong>✅ Next Steps:</strong></p>
+                        <ol>
+                            <li>Copy your Bot Token and Chat ID to <code>secrets.h</code></li>
+                            <li>Add your WiFi credentials</li>
+                            <li>Upload to your ESP32</li>
+                            <li>Test motion detection!</li>
+                        </ol>
+                    </div>
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4>❌ Configuration Error</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px solid #f5c6cb;">
+                        <p><strong>🔧 Troubleshooting:</strong></p>
+                        <ul>
+                            <li>Double-check your Bot Token from @BotFather</li>
+                            <li>Make sure you sent a message to your bot first</li>
+                            <li>Verify Chat ID from /getUpdates endpoint</li>
+                            <li>For groups, ensure the bot is added as admin</li>
+                        </ul>
+                    </div>
+                `;
+            } finally {
+                // Reset button
+                testBtn.disabled = false;
+                testBtn.innerHTML = '🧪 Test Bot Configuration';
+            }
+        }
+        
+        async function getChatId() {
+            const token = document.getElementById('tokenForChatId').value.trim();
+            const resultDiv = document.getElementById('chatIdResult');
+            const btn = document.getElementById('getChatIdBtn');
+            
+            if (!token) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <p>❌ Please enter your Bot Token first</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            if (token.length < 20 || !token.includes(':')) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <p>❌ Invalid Bot Token format. Should look like: <code>123456789:ABCdefGHIjklMNOpqrSTUvwxYZ123456789</code></p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Show loading state
+            btn.disabled = true;
+            btn.innerHTML = '🔍 Getting Chat ID...';
+            resultDiv.innerHTML = `
+                <div class="result info">
+                    <p>🔍 Fetching your Chat ID... Make sure you've sent a message to your bot first!</p>
+                </div>
+            `;
+            
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${token}/getUpdates`);
+                const data = await response.json();
+                
+                if (!data.ok) {
+                    throw new Error(`Telegram API Error: ${data.description}`);
+                }
+                
+                if (!data.result || data.result.length === 0) {
+                    const selectedChatType = document.querySelector('input[name="chatType"]:checked').value;
+                    let instructions = '';
+                    
+                    if (selectedChatType === 'personal') {
+                        instructions = `
+                            <ol>
+                                <li>Find your bot in Telegram (search for its username)</li>
+                                <li>Send any message to your bot (like "hello")</li>
+                                <li>Come back and click "Get My Chat ID" again</li>
+                            </ol>
+                        `;
+                    } else if (selectedChatType === 'group') {
+                        instructions = `
+                            <ol>
+                                <li><strong>Create or open your group</strong> in Telegram</li>
+                                <li><strong>Add your bot to the group</strong> (Group Settings → Add Members → Search for your bot)</li>
+                                <li><strong>Make bot an admin</strong> (Group Settings → Administrators → Add Administrator → Select your bot)</li>
+                                <li><strong>Send any message in the group</strong> (like "Testing bot setup")</li>
+                                <li>Come back and click "Get My Chat ID" again</li>
+                            </ol>
+                        `;
+                    } else {
+                        instructions = `
+                            <ol>
+                                <li><strong>Create or open your channel</strong> in Telegram</li>
+                                <li><strong>Add your bot as administrator</strong> (Channel Settings → Administrators → Add Administrator → Search for your bot)</li>
+                                <li><strong>Enable "Post Messages" permission</strong> for the bot</li>
+                                <li><strong>Post any message in the channel</strong> (like "Setting up alerts")</li>
+                                <li>Come back and click "Get My Chat ID" again</li>
+                            </ol>
+                        `;
+                    }
+                    
+                    resultDiv.innerHTML = `
+                        <div class="result error">
+                            <h4>❌ No Messages Found</h4>
+                            <p><strong>For ${selectedChatType === 'personal' ? 'Personal Chat' : selectedChatType === 'group' ? 'Group Chat' : 'Channel'} setup, please follow these steps:</strong></p>
+                            ${instructions}
+                            <div class="warning" style="margin-top: 15px;">
+                                <strong>💡 Important:</strong> ${selectedChatType !== 'personal' ? 'Your bot must be added as a member/administrator before it can see messages!' : 'Make sure you actually send a message to your bot first!'}
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Get the most recent message
+                const latestMessage = data.result[data.result.length - 1];
+                const chatId = latestMessage.message.chat.id;
+                const chatType = latestMessage.message.chat.type;
+                const chatTitle = latestMessage.message.chat.title || latestMessage.message.chat.first_name || 'Unknown';
+                
+                // Auto-fill the Chat ID in the main form
+                document.getElementById('chatId').value = chatId;
+                
+                // Determine chat type for user
+                let chatTypeDescription = '';
+                let setupInfo = '';
+                if (chatId > 0) {
+                    chatTypeDescription = '👤 Personal Chat';
+                    setupInfo = 'Perfect! Personal chat is the simplest setup - your bot will send motion alerts directly to you.';
+                } else if (chatId.toString().startsWith('-100')) {
+                    chatTypeDescription = '📢 Channel/Supergroup';
+                    setupInfo = 'Great! Channel/Supergroup setup allows broadcasting alerts to all subscribers. Make sure your bot has admin permissions to post messages.';
+                } else {
+                    chatTypeDescription = '👥 Group Chat';
+                    setupInfo = 'Excellent! Group chat setup allows your family/team to receive motion alerts together. Ensure your bot is added as a group member (preferably admin).';
+                }
+                
+                resultDiv.innerHTML = `
+                    <div class="result success">
+                        <h4>🎉 Chat ID Found Successfully!</h4>
+                        <p><strong>Your Chat ID:</strong> <code style="background: #e8f5e8; padding: 2px 6px; border-radius: 3px; font-size: 16px; font-weight: bold;">${chatId}</code></p>
+                        <p><strong>Chat Type:</strong> ${chatTypeDescription}</p>
+                        <p><strong>Chat Name:</strong> ${chatTitle}</p>
+                        <div class="info" style="margin: 15px 0; padding: 10px; background: #e8f4f8; border-radius: 5px; border-left: 3px solid #17a2b8;">
+                            <strong>💡 Setup Info:</strong> ${setupInfo}
+                        </div>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px solid #c3e6cb;">
+                        <p><strong>✅ Done!</strong> Your Chat ID has been automatically filled in the test form below. Now you can test your configuration!</p>
+                    </div>
+                `;
+                
+                // Trigger validation to update the form
+                validateInputs();
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="result error">
+                        <h4>❌ Error Getting Chat ID</h4>
+                        <p><strong>Error:</strong> ${error.message}</p>
+                        <hr style="margin: 15px 0; border: none; border-top: 1px solid #f5c6cb;">
+                        <p><strong>🔧 Try this manual method:</strong></p>
+                        <ol>
+                            <li>Send a message to your bot in Telegram</li>
+                            <li>Open this URL: <a href="https://api.telegram.org/bot${token}/getUpdates" target="_blank">https://api.telegram.org/bot${token}/getUpdates</a></li>
+                            <li>Look for <code>"chat":{"id":123456789}</code></li>
+                            <li>Copy the number after "id"</li>
+                        </ol>
+                    </div>
+                `;
+            } finally {
+                // Reset button
+                btn.disabled = false;
+                btn.innerHTML = '🔍 Get My Chat ID';
+            }
+        }
+        
+        // Handle chat type selection
+        function handleChatTypeChange() {
+            const personalInstructions = document.getElementById('personalChatInstructions');
+            const groupInstructions = document.getElementById('groupChatInstructions');
+            const channelInstructions = document.getElementById('channelChatInstructions');
+            
+            const selectedType = document.querySelector('input[name="chatType"]:checked').value;
+            
+            // Hide all instruction sections
+            personalInstructions.style.display = 'none';
+            groupInstructions.style.display = 'none';
+            channelInstructions.style.display = 'none';
+            
+            // Show relevant section
+            if (selectedType === 'personal') {
+                personalInstructions.style.display = 'block';
+            } else if (selectedType === 'group') {
+                groupInstructions.style.display = 'block';
+            } else if (selectedType === 'channel') {
+                channelInstructions.style.display = 'block';
+            }
+        }
+        
+        // Initialize validation on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            validateInputs();
+            
+            // Add event listeners for chat type radio buttons
+            const chatTypeRadios = document.querySelectorAll('input[name="chatType"]');
+            chatTypeRadios.forEach(radio => {
+                radio.addEventListener('change', handleChatTypeChange);
+            });
+            
+            // Initialize with default selection
+            handleChatTypeChange();
+        });
+    </script>
+</body>
+</html>

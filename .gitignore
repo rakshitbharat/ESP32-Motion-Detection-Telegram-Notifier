@@ -1,0 +1,30 @@
+# Ignore secrets file to prevent accidental commit of credentials
+include/secrets.h
+
+# PlatformIO files
+.pio/
+.vscode/
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+*.bin
+*.elf
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
+*.temp
+
+# IDE files (keep .vscode for shared settings)
+*.swp
+*.swo
+*~
+
+# Don't ignore important config files
+!include/secrets.h.template
+!include/secrets.h.example
