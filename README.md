@@ -1,308 +1,211 @@
-# ESP32 Motion Detection Telegram Notifier
+# ESP32 Motion Detection System
 
-A PlatformIO-based ESP32 project that detects motion using a PIR sensor and sends notifications to a Telegram channel or chat.
+A smart PIR motion sensor that sends Telegram notifications with configurable sensitivity settings.
 
-## ⚡ **Get Started in 5 Minutes!** 
-� **[QUICK_SETUP.md](QUICK_SETUP.md)** - Ultra-fast setup with only 4 configuration values needed!
+## ✨ What This Does
 
-## �🚀 Features
+**Simple**: Detects motion → Sends Telegram message  
+**Smart**: Configurable sensor settings with LED feedback  
+**Easy**: 5-minute setup with just 4 configuration values
 
-- **🏃‍♂️ Ultra-Quick Setup**: Only 4 values needed to start (WiFi + Telegram)
-- **🎯 Motion Detection**: Uses PIR sensor to detect movement with smart debouncing
-- **📱 Telegram Integration**: Real-time notifications with rich formatting and emoji
-- **📡 WiFi Management**: Auto-connection, reconnection, and multi-network support
-- **💬 Multiple Chat Support**: Send notifications to multiple Telegram chats/channels
-- **🤖 Bot Commands**: Interactive commands (`/status`, `/ping`, `/restart`, `/help`)
-- **💡 LED Indicators**: Visual feedback for system status and motion detection
-- **⚙️ 600+ Configuration Options**: Customize every aspect of behavior
-- **🔒 Security**: Sensitive credentials stored separately with validation
-- **🏗️ Multiple ESP32 Support**: ESP32, ESP32-S2, ESP32-S3, ESP32-C3 compatible
-- **🔧 Production Ready**: Advanced build system with multiple environments
+## 🎯 Key Features
 
-## � **Quick Start** 
+- **🏃 Motion Detection** - PIR sensor with adjustable sensitivity
+- **📱 Telegram Alerts** - Instant notifications to your phone
+- **🔧 Easy Configuration** - Physical button + LED patterns for sensor tuning
+- **🤖 Bot Commands** - Control via Telegram (`/status`, `/test_sensor`, `/sensitivity`)
+- **💡 Visual Feedback** - LED shows system status and configuration mode
 
-### **Want to get running immediately?** 
-📖 **[QUICK_SETUP.md](QUICK_SETUP.md)** - Complete setup in 5 minutes with only 4 configuration values!
+## 📦 What You Need
 
-### **Want all the details?** 
-Continue reading below for comprehensive setup and advanced features.
+| Item | Example | Price |
+|------|---------|-------|
+| ESP32 Board | ESP32-DevKitC | ~$10 |
+| PIR Motion Sensor | HC-SR501 | ~$3 |
+| 3 Jumper Wires | Male-to-Male | ~$1 |
 
----
+**Total Cost: ~$15** 💰
 
-## �📋 Hardware Requirements
-
-- **ESP32 Development Board** (ESP32-DevKitC, ESP32-S2, ESP32-S3, ESP32-C3)
-- **PIR Motion Sensor** (HC-SR501 or similar) 
-- **3 Jumper Wires**
-- **USB Cable** for programming
-- **Breadboard** (optional)
-
-## 🔌 Wiring Diagram
+## 🔌 Wiring (3 wires only!)
 
 ```
-PIR Sensor    ESP32
----------     -----
-VCC (red)   →  3.3V (or 5V if sensor supports it)
-GND (black) →  GND
-OUT (white) →  GPIO 4 (configurable in config.h)
-
-Built-in LED is on GPIO 2 (no additional wiring needed)
+PIR Sensor → ESP32
+VCC (Red)  → 3.3V
+GND (Black)→ GND  
+OUT (White)→ GPIO 4
 ```
 
-**💡 That's it! Only 3 wires needed for basic motion detection.**
+That's it! Built-in LED on GPIO 2 shows status.
 
-## 📱 Telegram Bot Setup
+## 📱 Quick Telegram Setup
 
-### 🧪 **Quick Configuration Test**
-**[🔗 Use Our Online Telegram Tester](https://rakshitbharat.github.io/ESP32-Motion-Detection-Telegram-Notifier/)**
+### 1. Create Bot
+1. Message `@BotFather` in Telegram
+2. Send `/newbot` 
+3. Choose name: "My Motion Detector"
+4. Choose username: "my_motion_bot"
+5. **Save the token** (looks like: `123456:ABCdef...`)
 
-Before diving into manual setup, use our web-based tester to verify your Telegram configuration works correctly. This tool tests the exact same values you'll use in your ESP32 code.
+### 2. Get Chat ID
+1. Send "hello" to your bot
+2. Visit: `https://api.telegram.org/bot<TOKEN>/getUpdates`
+3. **Copy the "id" number**
 
-### Step 1: Create a Telegram Bot
+### 3. Test It
+Visit: `https://api.telegram.org/bot<TOKEN>/sendMessage?chat_id=<ID>&text=Test`
 
-1. **Open Telegram** and search for `@BotFather`
-2. **Start a chat** with BotFather by clicking "Start"
-3. **Create a new bot** by sending: `/newbot`
-4. **Choose a name** for your bot (e.g., "Motion Alert Bot")
-5. **Choose a username** for your bot (must end with 'bot', e.g., "motion_alert_notify_bot")
-6. **Save the Bot Token** - BotFather will provide a token like: `1234567890:ABCdefGHIjklMNOpqrSTUvwxYZ123456789`
+## ⚙️ Software Setup
 
-### Step 2: Get Your Chat ID
+### 1. Install PlatformIO
+Download [PlatformIO IDE](https://platformio.org/install/ide?install=vscode) (free)
 
-Choose your notification method:
-
-#### Option A: Personal Chat (Simplest)
-1. **Send a message** to your bot (any message like "hello")
-2. **Open this URL** in your browser: `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates`
-3. **Copy the "id"** number (positive number like `123456789`)
-
-#### Option B: Group Chat (Family/Team Notifications)
-1. **Create or open** your Telegram group
-2. **Add your bot to the group**:
-   - Group Settings → Add Members → Search for your bot username → Add
-3. **Make bot an administrator** (recommended):
-   - Group Settings → Administrators → Add Administrator → Select your bot → Enable "Post Messages"
-4. **Send any message** in the group (like "Testing setup")
-5. **Open this URL**: `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates`
-6. **Copy the "id"** number (negative number like `-123456789`)
-
-#### Option C: Channel (Broadcast Alerts)
-1. **Create or open** your Telegram channel
-2. **Add your bot as administrator**:
-   - Channel Settings → Administrators → Add Administrator → Search for your bot → Enable "Post Messages"
-3. **Post any message** in the channel
-4. **Open this URL**: `https://api.telegram.org/bot<YOUR_BOT_TOKEN>/getUpdates`
-5. **Copy the "id"** number (starts with `-100` like `-1001234567890`)
-
-> **💡 Pro Tip:** Use our [Interactive Telegram Tester](https://rakshitbharat.github.io/ESP32-Motion-Detection-Telegram-Notifier/) for guided setup with automatic Chat ID detection!
-
-### Step 3: Test Your Bot
-Send this URL in your browser to test:
-```
-https://api.telegram.org/bot<YOUR_BOT_TOKEN>/sendMessage?chat_id=<YOUR_CHAT_ID>&text=Test message
-```
-
-## ⚙️ Project Setup
-
-### Prerequisites
-- **PlatformIO IDE** or **PlatformIO Core**
-- **Git** (optional)
-
-### Installation Steps
-
-1. **Clone or download** this project:
-   ```bash
-   git clone <repository-url>
-   cd motion-detect-notification
-   ```
-
-2. **Create secrets file**:
-   ```bash
-   cp include/secrets.h.template include/secrets.h
-   ```
-
-3. **Configure your credentials** in `include/secrets.h`:
-   ```cpp
-   const char* WIFI_SSID = "Your_WiFi_Network_Name";
-   const char* WIFI_PASSWORD = "Your_WiFi_Password";
-   const char* BOT_TOKEN = "1234567890:ABCdefGHIjklMNOpqrSTUvwxYZ123456789";
-   const char* CHAT_ID = "-1001234567890";  // Your chat/channel ID
-   ```
-
-4. **Optional**: Modify settings in `include/config.h`:
-   - Change GPIO pins
-   - Adjust timing intervals
-   - Modify device name
-
-5. **Build and upload**:
-   ```bash
-   pio run --target upload
-   ```
-
-6. **Monitor serial output**:
-   ```bash
-   pio device monitor
-   ```
-
-## 📁 Project Structure
-
-```
-motion-detect-notification/
-├── platformio.ini          # PlatformIO configuration
-├── src/
-│   └── main.cpp            # Main program
-├── include/
-│   ├── config.h            # Configuration settings
-│   ├── secrets.h.template  # Template for credentials
-│   └── secrets.h           # Your actual credentials (not in git)
-├── .gitignore              # Git ignore file
-└── README.md               # This file
-```
-
-## ⚡ Configuration Options
-
-### WiFi Settings (`secrets.h`)
-```cpp
-const char* WIFI_SSID = "YourWiFiName";
-const char* WIFI_PASSWORD = "YourWiFiPassword";
-```
-
-### Telegram Settings (`secrets.h`)
-```cpp
-const char* BOT_TOKEN = "your-bot-token";
-const char* CHAT_ID = "your-chat-id";
-
-// Multiple recipients (optional)
-const char* CHAT_IDS[] = {
-    "-1001234567890",  // Main channel
-    "123456789",       // Personal chat
-};
-```
-
-### Hardware Settings (`config.h`)
-```cpp
-#define MOTION_SENSOR_PIN 4    // PIR sensor pin
-#define LED_PIN 2              // LED indicator pin
-```
-
-### Timing Settings (`config.h`)
-```cpp
-#define NOTIFICATION_INTERVAL 30000  // Min time between notifications (ms)
-#define WIFI_TIMEOUT 10000           // WiFi connection timeout (ms)
-```
-
-## 🤖 Bot Commands
-
-Your bot will respond to these commands:
-
-- `/status` - Show system status and information
-- `/test` - Send a test notification
-- `/help` - Show available commands
-
-## 🔧 Troubleshooting
-
-### Common Issues
-
-#### WiFi Connection Problems
-- **Check credentials** in `secrets.h`
-- **Verify WiFi network** is 2.4GHz (ESP32 doesn't support 5GHz)
-- **Check signal strength** - move ESP32 closer to router
-
-#### Telegram Not Working
-- **🧪 Use Our Telegram Tester**: [Test Configuration Online](https://rakshitbharat.github.io/ESP32-Motion-Detection-Telegram-Notifier/)
-- **Verify bot token** is correct
-- **Check chat ID** format (negative for groups/channels)
-- **Ensure bot is added** to channel/group as admin
-- **Test bot manually** using browser method above
-
-#### Motion Sensor Issues
-- **Check wiring** connections
-- **Verify power supply** (3.3V or 5V depending on sensor)
-- **Adjust sensor sensitivity** (potentiometers on PIR sensor)
-- **Check pin configuration** in `config.h`
-
-#### Build Errors
-- **Update PlatformIO** to latest version
-- **Check internet connection** for library downloads
-- **Verify ESP32 board** is properly connected
-
-### Serial Monitor Output
-Use serial monitor to debug:
+### 2. Configure Project
 ```bash
-pio device monitor --baud 115200
+# Clone project
+git clone <this-repo>
+cd ESP32-Motion-Detection-Telegram-Notifier
+
+# Copy template
+cp include/secrets.h.template include/secrets.h
 ```
 
-Look for these status messages:
-- `✅ WiFi connected successfully!`
-- `✅ Notification sent successfully`
-- `🚨 MOTION DETECTED!`
+### 3. Add Your Settings
+Edit `include/secrets.h`:
+```cpp
+#define WIFI_SSID_SECRET "YourWiFiName"
+#define WIFI_PASSWORD_SECRET "YourWiFiPassword" 
+#define BOT_TOKEN_SECRET "123456:ABCdef..."
+#define CHAT_ID_SECRET "123456789"
+```
 
-## 🔒 Security Considerations
+### 4. Upload & Run
+```bash
+pio run --target upload --target monitor
+```
 
-1. **Never commit** `secrets.h` to version control
-2. **Use strong WiFi passwords**
-3. **Keep bot token private**
-4. **Regularly update** firmware and libraries
-5. **Monitor bot usage** for unauthorized access
+## 🎛️ Sensor Configuration Mode
 
-## 📈 Customization Ideas
+**NEW FEATURE**: Easy PIR sensor tuning!
 
-### Hardware Enhancements
-- **Add multiple PIR sensors** for different rooms
-- **Include temperature/humidity sensor** (DHT22)
-- **Add buzzer** for local alerts
-- **Use external antenna** for better WiFi range
+### Physical Button Method
+1. **Hold Boot Button** (3 seconds) → Enter config mode
+2. **Press Button** → Cycle through: Sensitivity → Range → Test → Save
+3. **Watch LED patterns** → Shows current setting level
+4. **Auto-saves** when complete
 
-### Software Features
-- **Add time-based scheduling** (only alert during certain hours)
-- **Implement location-based messages** for multiple sensors
-- **Add photo capture** with ESP32-CAM
-- **Create web interface** for configuration
-- **Store logs** on SD card
+### Telegram Commands
+```
+/sensor_config     - Enter config mode
+/sensitivity 0-4   - Set sensitivity (0=lowest, 4=highest)
+/range 0-2         - Set range (0=short, 2=long)  
+/test_sensor       - Test for 10 seconds
+/show_settings     - View current settings
+```
 
-### Advanced Telegram Features
-- **Inline keyboards** for interactive responses
-- **Photo/video sending** capability
-- **Group management** commands
-- **Custom notification sounds**
+### Sensitivity Levels
+| Level | Response | Best For |
+|-------|----------|----------|
+| 0-1 | Very Slow | Outdoor (avoid false alarms) |
+| 2 | Balanced | Indoor rooms |
+| 3-4 | Very Fast | Close-range detection |
 
-## 📚 Dependencies
+## 🚀 Usage
 
-This project uses these libraries (automatically installed by PlatformIO):
+### First Time
+1. Power on → LED blinks (connecting to WiFi)
+2. LED solid → Connected and monitoring
+3. Walk past sensor → LED flashes + Telegram message
 
-- **ArduinoJson** (^6.21.3) - JSON parsing and creation
-- **WiFi** (^1.2.7) - ESP32 WiFi functionality
-- **UniversalTelegramBot** (^1.3.0) - Telegram Bot API
-- **ArduinoHttpClient** (^0.4.0) - HTTP client for API calls
+### Daily Use
+- Motion detected → Get Telegram alert
+- Use `/status` → Check system health
+- Hold button → Adjust sensitivity if needed
 
-## 🤝 Contributing
+### Troubleshooting
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+**No WiFi connection?**
+- Check 2.4GHz network (ESP32 doesn't support 5GHz)
+- Verify credentials in `secrets.h`
 
-## 📄 License
+**No Telegram messages?** 
+- Test bot manually with browser method above
+- Check bot token and chat ID format
 
-This project is open source. Feel free to use and modify as needed.
+**False alarms?**
+- Lower sensitivity: `/sensitivity 1`
+- Adjust PIR sensor knobs (if available)
 
-## 🆘 Support
+**Missing motion?**
+- Increase sensitivity: `/sensitivity 3`
+- Check sensor positioning and power
 
-If you encounter issues:
+## 📊 Commands Reference
 
-1. **Check this README** for troubleshooting steps
-2. **Review serial monitor** output for error messages
-3. **Verify hardware connections**
-4. **Test bot manually** using browser method
-5. **Open an issue** in the repository with details
+| Command | Description |
+|---------|-------------|
+| `/status` | System information |
+| `/test` | Send test message |
+| `/sensor_config` | Enter sensor setup mode |
+| `/sensitivity [0-4]` | Adjust motion sensitivity |
+| `/range [0-2]` | Adjust detection range |
+| `/test_sensor` | 10-second motion test |
+| `/show_settings` | Current sensor config |
+| `/help` | Show all commands |
 
-## 🎯 Version History
+## 🔧 Advanced Configuration
 
-- **v1.0.0** - Initial release with basic motion detection and Telegram notifications
+Edit `include/config.h` for:
+- Different GPIO pins
+- Notification timing
+- LED behavior
+- Debug output levels
+
+Key settings:
+```cpp
+#define MOTION_SENSOR_PIN 4        // PIR sensor pin
+#define NOTIFICATION_INTERVAL 10000 // Min time between alerts (ms)
+#define PRODUCTION_MODE false      // Enable full features
+```
+
+## 💡 Pro Tips
+
+1. **Sensor Placement**: 6-10 feet high, avoid heat sources
+2. **Sensitivity Tuning**: Start with level 2, adjust based on results
+3. **Range Setting**: Use "Short" for bathrooms, "Long" for living rooms
+4. **Testing**: Use `/test_sensor` to verify settings before leaving
+5. **Multiple Sensors**: Copy project folder for different rooms
+
+## 🏗️ Project Structure
+
+```
+ESP32-Motion-Detection-Telegram-Notifier/
+├── src/main.cpp              # Main program
+├── include/
+│   ├── config.h              # Settings
+│   ├── secrets.h.template    # Credentials template
+│   └── secrets.h             # Your credentials (keep private!)
+├── platformio.ini            # Build configuration
+└── SENSOR_CONFIG_GUIDE.md    # Detailed sensor tuning guide
+```
+
+## 🎯 Version 2.0 Features
+
+- ✅ Physical button configuration mode
+- ✅ LED pattern feedback system
+- ✅ Telegram sensor controls
+- ✅ Adjustable sensitivity (5 levels)
+- ✅ Configurable range settings
+- ✅ Real-time sensor testing
+- ✅ Persistent settings storage
+
+## 🆘 Getting Help
+
+1. **Check Serial Monitor**: `pio device monitor`
+2. **Test Components**: Use `/test_sensor` command
+3. **Verify Wiring**: Only 3 wires needed
+4. **Check Settings**: Use `/show_settings`
 
 ---
 
-**Happy Making! 🚀**
-
-*Remember to keep your credentials secure and never share your bot token publicly.*
+**🚀 Ready to build your smart motion detector?**  
+Follow the setup steps above and you'll have motion alerts in 15 minutes!
