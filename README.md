@@ -2,11 +2,9 @@
 
 A smart PIR motion sensor that sends Telegram notifications with configurable sensitivity settings.
 
-## ✨ What This Does
+## Overview
 
-**Simple**: Detects motion → Sends Telegram message  
-**Smart**: Configurable sensor settings with LED feedback  
-**Easy**: 5-minute setup with just 4 configuration values
+This project creates a smart motion detection system using an ESP32 and PIR sensor that sends instant Telegram notifications when motion is detected. Features configurable sensitivity settings and LED feedback for easy setup and tuning.
 
 ## 🎯 Key Features
 
@@ -16,15 +14,12 @@ A smart PIR motion sensor that sends Telegram notifications with configurable se
 - **🤖 Bot Commands** - Control via Telegram (`/status`, `/test_sensor`, `/sensitivity`)
 - **💡 Visual Feedback** - LED shows system status and configuration mode
 
-## 📦 What You Need
+## 📦 Hardware Requirements
 
-| Item | Example | Price |
-|------|---------|-------|
-| ESP32 Board | ESP32-DevKitC | ~$10 |
-| PIR Motion Sensor | HC-SR501 | ~$3 |
-| 3 Jumper Wires | Male-to-Male | ~$1 |
-
-**Total Cost: ~$15** 💰
+- ESP32 Development Board (ESP32-DevKitC or similar)
+- PIR Motion Sensor (HC-SR501 or similar) 
+- 3 Jumper Wires (Male-to-Male)
+- USB Cable for programming
 
 ## 🔌 Wiring (3 wires only!)
 
@@ -62,7 +57,7 @@ Download [PlatformIO IDE](https://platformio.org/install/ide?install=vscode) (fr
 ### 2. Configure Project
 ```bash
 # Clone project
-git clone <this-repo>
+git clone https://github.com/rakshitbharat/ESP32-Motion-Detection-Telegram-Notifier.git
 cd ESP32-Motion-Detection-Telegram-Notifier
 
 # Copy template
@@ -207,5 +202,4 @@ ESP32-Motion-Detection-Telegram-Notifier/
 
 ---
 
-**🚀 Ready to build your smart motion detector?**  
-Follow the setup steps above and you'll have motion alerts in 15 minutes!
+**Ready to get started?** Follow the setup steps above to configure your motion detection system.
